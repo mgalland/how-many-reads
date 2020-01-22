@@ -1,0 +1,75 @@
+    """
+A Snakemake pipeline to go from mRNA-Seq reads to normalised transcript abundance estimates and differential expression
+"""
+from snakemake.utils import min_version
+############################
+## Minimal Snakemake version
+############################
+min_version("5.2.0")
+
+############
+## Libraries
+############
+
+import pandas as pd
+
+# this container defines the underlying OS for each job when using the workflow
+# with --use-conda --use-singularity
+singularity: "docker://continuumio/miniconda3"
+
+
+###############
+# Configuration
+###############
+configfile: "config.yaml"
+
+WORKING_DIR = config["workdir"]
+RESULT_DIR  = config["resultdir"]
+
+
+########################
+# Samples and conditions
+########################
+samples = pd.read_csv("samples.tsv", dtype=str, sep="\t").set_index("sample", drop=False)
+SAMPLES = samples.index.tolist()
+
+############################
+## Input functions for rules
+############################
+
+def sample_is_single_end(sample):
+    """This function detect missing value in the column 2 of the units.tsv"""
+    return pd.isnull(samples.loc[sample,"fq2"])
+
+def get_fastq(wildcards):
+	""" This function checks if the sample has paired end or single end reads
+	and returns 1 or 2 names of the fastq files """
+	if sample_is_single_end(wildcards.sample):
+		return samples.loc[(wildcards.sample), ["fq1"]].dropna()
+	else:
+		return samples.loc[(wildcards.sample), ["fq1", "fq2"]].dropna()
+
+def get_trimmed(wildcards):
+	""" This function checks if sample is paired end or single end
+	and returns 1 or 2 names of the trimmed fastq files """
+	if sample_is_single_end(wildcards.sample):
+		return WORKING_DIR + wildcards.sample + "_R1_trimmed.fq.gz"
+	else:
+		return [WORKING_DIR + wildcards.sample + "_R1_trimmed.fq.gz", WORKING_DIR + wildcards.sample + "_R2_trimmed.fq.gz"]
+
+
+
+##############
+# Final output
+##############
+rule all: 
+    input:
+        KALLISTO = expand(RESULT_DIR + "kallisto/{samples}/abundance.tsv",samples=SAMPLES),
+        SLEUTH   = RESULT_DIR + "abundance_tidy.tsv"
+
+##############
+# Rules
+##############
+
+include: "rules/subset.smk"
+include: "rules/rnaseq.smk"
