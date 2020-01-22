@@ -2,6 +2,7 @@
 A Snakemake pipeline to go from mRNA-Seq reads to normalised transcript abundance estimates and differential expression
 """
 from snakemake.utils import min_version
+
 ############################
 ## Minimal Snakemake version
 ############################
@@ -10,7 +11,7 @@ min_version("5.2.0")
 ############
 ## Libraries
 ############
-
+import os
 import pandas as pd
 
 # this container defines the underlying OS for each job when using the workflow
@@ -30,8 +31,17 @@ RESULT_DIR  = config["resultdir"]
 ########################
 # Samples and conditions
 ########################
+
 samples = pd.read_csv("samples.tsv", dtype=str, sep="\t").set_index("sample", drop=False)
 SAMPLES = samples.index.tolist()
+
+# always stops at 100%
+subset_start = config["subset"]["start"]
+subset_step = config["subset"]["step"]
+subset_end = 100 + subset_step  #  to be sure that 100% is included in the sample list
+ 
+PERCENTAGES = list(range(subset_start, subset_end, subset_step))
+
 
 ############################
 ## Input functions for rules
@@ -49,14 +59,24 @@ def get_fastq(wildcards):
 	else:
 		return samples.loc[(wildcards.sample), ["fq1", "fq2"]].dropna()
 
-def get_trimmed(wildcards):
+def get_trimmed_subsampled_reads(wildcards):
 	""" This function checks if sample is paired end or single end
-	and returns 1 or 2 names of the trimmed fastq files """
+	and returns 1 or 2 names of the trimmed and subsampled fastq files """
 	if sample_is_single_end(wildcards.sample):
-		return WORKING_DIR + wildcards.sample + "_R1_trimmed.fq.gz"
+		return WORKING_DIR + wildcards.sample + "_R1.trimmed_" + wildcards.percentage + "_percent.fq"
 	else:
-		return [WORKING_DIR + wildcards.sample + "_R1_trimmed.fq.gz", WORKING_DIR + wildcards.sample + "_R2_trimmed.fq.gz"]
+		return [
+		WORKING_DIR + wildcards.sample + "_R1_trimmed_" + wildcards.percentage + "_percent.fq", 
+		WORKING_DIR + wildcards.sample + "_R2_trimmed_" + wildcards.percentage + "_percent.fq"
+		]
 
+def get_name_without_file_extension(file):
+	"""This function returns the file name withouth its path and extension
+	Applying this function to the `fastq/sample_01.fastq.gz`file yields `sample_01` 
+	"""
+	file_basename = os.path.basename(file)
+	file_basename_without_extension = os.path.splitext(file_basename)
+	return file_basename_without_extension
 
 
 ##############
@@ -64,7 +84,7 @@ def get_trimmed(wildcards):
 ##############
 rule all: 
     input:
-        KALLISTO = expand(RESULT_DIR + "kallisto/{samples}/abundance.tsv",samples=SAMPLES),
+        KALLISTO = expand(RESULT_DIR + "kallisto/{percentage}_of_{sample}_abundance.tsv", sample=SAMPLES, percentage = PERCENTAGES),
         SLEUTH   = RESULT_DIR + "abundance_tidy.tsv"
 
 ##############
