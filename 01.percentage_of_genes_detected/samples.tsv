@@ -1,2 +1,9 @@
 sample	condition	fq1	fq2
-Moneymaker	Moneymaker	fastq/7_ACTTGA_L002_R1_001.fastq.gz
+Moneymaker	Moneymaker	fastq/C32_1.fastq.gz	
+parent_01	Moneymaker	fastq/P1_cv.fastq.gz	
+parent_02	Moneymaker	fastq/P2_cv.fastq.gz	
+instar	manduca	fastq/SRR2660019.fastq.gz	
+
+
+
+

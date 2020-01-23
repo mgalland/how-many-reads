@@ -6,7 +6,7 @@
 
 rule run_sleuth:
     input:
-        expand(RESULT_DIR + "kallisto/{sample}_abundance_{percentage}_percent.tsv", sample=SAMPLES, percentage=PERCENTAGES)
+        expand(RESULT_DIR + "kallisto/{percentage}_of_{sample}_abundance.tsv", sample=SAMPLES, percentage=PERCENTAGES)
     output:
         normalized_counts = RESULT_DIR + "abundance_tidy.tsv"
     params:

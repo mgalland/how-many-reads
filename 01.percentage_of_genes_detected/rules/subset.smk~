@@ -16,7 +16,7 @@ rule decompress:
             shell("touch {output.fq2")
         else:
         	shell("gunzip -c {input[0]} > {output.fq1}")
-        	shell("gunzip -c {input[1]} > {output.fq2}")
+        	shell("gunzip -c {input[1]} > {output.fq1}")
 
 ################
 ## Read trimming

@@ -84,7 +84,7 @@ def get_name_without_file_extension(file):
 ##############
 rule all: 
     input:
-        KALLISTO = expand(RESULT_DIR + "kallisto/{percentage}_of_{sample}_abundance.tsv", sample=SAMPLES, percentage = PERCENTAGES),
+        KALLISTO = expand(RESULT_DIR + "kallisto/{sample}_abundance_{percentage}_percent.tsv", sample=SAMPLES, percentage = PERCENTAGES),
         SLEUTH   = RESULT_DIR + "abundance_tidy.tsv"
 
 ##############
