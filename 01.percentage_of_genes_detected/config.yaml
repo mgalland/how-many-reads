@@ -11,11 +11,9 @@ fastp:
   qualified_quality_phred: 15 # the quality value that a base is qualified. Default 15 means phred quality >=Q15 is qualified. (int [=15])
 
 # kallisto fasta file that will be indexed by Kallisto
-kallisto:
-  fasta_ref: rules/refs/ITAG4.0_cDNA.fasta
-  fragment-length: 180 # see https://pachterlab.github.io/kallisto/starting
-  sd: 20
-  bootstrap: 100
+refs:
+  genome: rules/refs/S_lycopersicum_chromosomes.4.00.fa
+  gff: rules/refs/ITAG4.0_gene_models.gff 
 
 # parameters for subsetting reads (rarefaction curve)
 # note: it always ends at 100% (= original sample)

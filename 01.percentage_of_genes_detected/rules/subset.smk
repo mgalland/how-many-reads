@@ -23,11 +23,11 @@ rule decompress:
 ################
 rule fastp:
     input:
-        fq1 = temp(WORKING_DIR + "{sample}_R1.fq"),
-        fq2 = temp(WORKING_DIR + "{sample}_R2.fq")
+        fq1 = WORKING_DIR + "{sample}_R1.fq",
+        fq2 = WORKING_DIR + "{sample}_R2.fq"
     output:
-        fq1 = WORKING_DIR + "{sample}_R1_trimmed.fq",
-        fq2 = WORKING_DIR + "{sample}_R2_trimmed.fq",
+        fq1 = temp(WORKING_DIR + "{sample}_R1_trimmed.fq"),
+        fq2 = temp(WORKING_DIR + "{sample}_R2_trimmed.fq"),
         html = RESULT_DIR + "fastp/{sample}.html",
         json = temp(WORKING_DIR + "fastp/{sample}.html")
     message:"trimming {wildcards.sample} reads"
@@ -53,8 +53,8 @@ rule subset:
         fq1 = WORKING_DIR + "{sample}_R1_trimmed.fq",
         fq2 = WORKING_DIR + "{sample}_R2_trimmed.fq"
     output:
-        fq1 = WORKING_DIR + "{sample}_R1_trimmed_{percentage}_percent.fq",
-        fq2 = WORKING_DIR + "{sample}_R2_trimmed_{percentage}_percent.fq",
+        fq1 = temp(WORKING_DIR + "{sample}_R1_trimmed_{percentage}_percent.fq"),
+        fq2 = temp(WORKING_DIR + "{sample}_R2_trimmed_{percentage}_percent.fq"),
     message: "Extracting {wildcards.percentage} percent of the initial {wildcards.sample} reads"
     params:
         sample_name = "{sample}",

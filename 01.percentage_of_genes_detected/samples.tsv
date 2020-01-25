@@ -1,8 +1,6 @@
-sample	condition	fq1	fq2
-Moneymaker	Moneymaker	fastq/C32_1.fastq.gz	
-parent_01	Moneymaker	fastq/P1_cv.fastq.gz	
-parent_02	Moneymaker	fastq/P2_cv.fastq.gz	
-instar	manduca	fastq/SRR2660019.fastq.gz	
+sample	fq1	fq2
+Moneymaker_01	fastq/C32_1.fastq.gz	
+Moneymaker_02	fastq/C32_2.fastq.gz	
 
 
 

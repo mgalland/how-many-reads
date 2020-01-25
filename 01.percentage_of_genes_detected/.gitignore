@@ -1,2 +1,4 @@
 fastq/
 .DS_Store
+rules/refs/ITAG4.0_gene_models.gff
+rules/refs/S_lycopersicum_chromosomes.4.00.fa
