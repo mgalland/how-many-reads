@@ -15,3 +15,4 @@ dependencies:
     - tar = 1.29
     - hisat2 = 2.1.0 
     - subread = 1.6.4 
+    - samtools = 1.9

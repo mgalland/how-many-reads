@@ -13,7 +13,7 @@ rule decompress:
     run:
         if sample_is_single_end(params.sample_name):
             shell("gunzip -c {input} > {output.fq1}")
-            shell("touch {output.fq2")
+            shell("touch {output.fq2}")
         else:
         	shell("gunzip -c {input[0]} > {output.fq1}")
         	shell("gunzip -c {input[1]} > {output.fq2}")

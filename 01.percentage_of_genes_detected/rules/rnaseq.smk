@@ -67,7 +67,7 @@ rule hisat_mapping:
         indexName = WORKING_DIR + "genome/genome",
         sampleName = "{sample}"
     message:
-        "mapping {wildcards.sample} reads to genome."
+        "mapping {wildcards.sample} reads (subset {wildcards.percentage}%) to genome."
     threads: 10
     run:
         if sample_is_single_end(params.sampleName):
